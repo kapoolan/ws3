@@ -24,6 +24,29 @@ function getUsers(callback) {
   });
 }
 
+function getUsers2(callback) {
+  pg.connect(connString, function (err, client, done) {
+    if (err) {
+      callback(err);
+    }
+    else {
+      client.query('select fname,lname from users', function (err, result) {
+        // Ends the "transaction":
+        done();
+        // Disconnects from the database:
+        client.end();
+        if (err) {
+          callback(err);
+        }
+        else {
+          callback(undefined, result.rows);
+        }
+      });
+    }
+  });
+}
+
+
 function createUser(uid, fname, lname, passwd, age, callback) {
   pg.connect(connString, function (err, client, done) {
     if (err) {
@@ -90,12 +113,24 @@ function printUserNames(err, users) {
   else {
     users.forEach(function (user) {
       console.log(user.fname);
+      console.log(user.lname);
+    });
+  }
+}
+
+function printUserAge(err, users) {
+  if (err) {
+    throw err;
+  }
+  else {
+    users.forEach(function (user) {
+      console.log(user.age);
     });
   }
 }
 
 if (process.argv.length < 3) {
-  console.log('usage: node users.js [u|n|p|c]');
+  console.log('usage: node users.js [u|n|p|c|q]');
   process.exit(1);
 }
 
@@ -119,6 +154,9 @@ case 'c':
   var passwd = process.argv[6];
   var age    = process.argv[7];
   createUser(uid, fname, lname, passwd, age, printUsers);
+  break;
+case 'q':
+  getUsers2(printUsers);
   break;
 default:
   console.log("I don't know what you mean: " + process.argv[2]);
