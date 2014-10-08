@@ -1,4 +1,4 @@
-drop table if exists users;
+ drop table if exists users;
 drop table if exists address;
 drop table if exists lives;
 
