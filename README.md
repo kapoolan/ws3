@@ -1,5 +1,5 @@
 ws3
 ===
-case 's' means single information;
+case 's' returns single information;
 
-case 'a' means all information;
+case 'a' returns all information;
