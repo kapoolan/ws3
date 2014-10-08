@@ -1,10 +1,3 @@
-function foo() {
-  return "foo";
-}
-
-exports.foo = foo
-
-
 var pg = require('pg');
 
 var connString = 'postgres://student:student@localhost/student';
