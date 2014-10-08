@@ -30,7 +30,7 @@ function getUsers2(callback) {
       callback(err);
     }
     else {
-      client.query('select fname,lname from users', function (err, result) {
+      client.query('select U.fname as first,U.lname as last,A.street,A.city from address A,users U,lives L', function (err, result) {
         // Ends the "transaction":
         done();
         // Disconnects from the database:
@@ -45,6 +45,29 @@ function getUsers2(callback) {
     }
   });
 }
+
+function getUsers3(callback) {
+  pg.connect(connString, function (err, client, done) {
+    if (err) {
+      callback(err);
+    }
+    else {
+      client.query('select * from users,address,lives', function (err, result) {
+        // Ends the "transaction":
+        done();
+        // Disconnects from the database:
+        client.end();
+        if (err) {
+          callback(err);
+        }
+        else {
+          callback(undefined, result.rows);
+        }
+      });
+    }
+  });
+}
+
 
 
 function createUser(uid, fname, lname, passwd, age, callback) {
@@ -130,7 +153,7 @@ function printUserAge(err, users) {
 }
 
 if (process.argv.length < 3) {
-  console.log('usage: node users.js [u|n|p|c|q]');
+  console.log('usage: node users.js [u|n|p|c|q|w]');
   process.exit(1);
 }
 
@@ -157,6 +180,9 @@ case 'c':
   break;
 case 'q':
   getUsers2(printUsers);
+  break;
+case 'w':
+  getUsers3(printUsers);
   break;
 default:
   console.log("I don't know what you mean: " + process.argv[2]);
